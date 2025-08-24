@@ -3,23 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Analytics Portal | Home</title>
+    <title>Data Analytics Portal | Azure Databricks Outputs</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #2563eb;
+            --primary-light: #3b82f6;
             --primary-dark: #1d4ed8;
             --secondary: #64748b;
+            --secondary-light: #94a3b8;
             --light: #f8fafc;
             --dark: #0f172a;
+            --dark-light: #1e293b;
             --border: #e2e8f0;
             --success: #10b981;
+            --gradient-start: #2563eb;
+            --gradient-end: #7c3aed;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             margin: 0;
             min-height: 100vh;
             display: flex;
@@ -28,36 +41,64 @@
             justify-content: flex-start;
             color: var(--dark);
             line-height: 1.6;
+            padding: 1rem;
         }
         
         .container {
             background: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-                        0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            border-radius: 12px;
             padding: 2.5rem;
-            margin-top: 3rem;
+            margin-top: 2rem;
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
         }
         
         .header {
             text-align: center;
             margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
             padding-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            border-radius: 3px;
         }
         
         .logo {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--primary);
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         h1 {
@@ -65,72 +106,241 @@
             font-weight: 600;
             color: var(--dark);
             margin: 0.5rem 0;
+            animation: fadeIn 0.8s ease 0.2s both;
         }
         
         .subtitle {
             color: var(--secondary);
             font-size: 0.95rem;
             margin: 0;
+            animation: fadeIn 0.8s ease 0.4s both;
         }
         
-        .nav-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
         
         .nav-item {
-            margin-bottom: 0.75rem;
+            position: relative;
+            overflow: hidden;
         }
         
         .nav-link {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.875rem 1.25rem;
+            padding: 1.25rem;
             background-color: white;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 10px;
             color: var(--dark);
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            height: 100%;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-light), var(--primary-dark));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
         }
         
         .nav-link:hover {
-            border-color: var(--primary);
-            background-color: #f8fafc;
-            transform: translateY(-1px);
+            border-color: transparent;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .nav-link:hover::before {
+            opacity: 1;
+        }
+        
+        .nav-link:hover i {
+            color: white;
+            transform: scale(1.1);
         }
         
         .nav-link i {
             color: var(--primary);
-            width: 1.25rem;
+            width: 1.5rem;
             text-align: center;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link span {
+            flex: 1;
+        }
+
+        /* Feedback Form */
+        .feedback {
+            margin-top: 2.5rem;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: linear-gradient(to bottom right, #f9fafb, #f1f5f9);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feedback::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+        }
+
+        .feedback h2 {
+            margin-top: 0;
+            font-size: 1.35rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .feedback label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-light);
+        }
+
+        .feedback input, .feedback textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback input:focus, .feedback textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .feedback button {
+            margin-top: 0.5rem;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feedback button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
         }
         
         .footer {
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             text-align: center;
             font-size: 0.875rem;
             color: var(--secondary);
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            width: 100%;
         }
         
-        @media (max-width: 640px) {
+        /* Decorative elements */
+        .decoration {
+            position: absolute;
+            z-index: 0;
+        }
+        
+        .circle-1 {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(to right bottom, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+            top: -50px;
+            right: -50px;
+        }
+        
+        .circle-2 {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(to left top, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+            bottom: -30px;
+            left: -30px;
+        }
+        
+        @media (max-width: 768px) {
             .container {
-                margin: 1rem;
-                padding: 1.5rem;
+                margin: 0.5rem;
+                padding: 1.75rem;
             }
             
             .header {
                 padding-bottom: 1rem;
                 margin-bottom: 1.5rem;
             }
+            
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .feedback {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.75rem;
+            }
+            
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .nav-link {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Decorative elements -->
+        <div class="decoration circle-1"></div>
+        <div class="decoration circle-2"></div>
+        
         <div class="header">
             <div class="logo">
                 <i class="fas fa-chart-line"></i>
@@ -140,38 +350,77 @@
             <p class="subtitle">Access all Azure Databricks outputs below</p>
         </div>
         
-        <ul class="nav-list">
-            <li class="nav-item">
+        <div class="nav-grid">
+            <div class="nav-item">
                 <a href="pages/eda.html" class="nav-link">
                     <i class="fas fa-search"></i>
                     <span>Exploratory Data Analysis</span>
                 </a>
-            </li>
-            <li class="nav-item">
+            </div>
+            <div class="nav-item">
                 <a href="pages/eda2.html" class="nav-link">
                     <i class="fas fa-search"></i>
                     <span>Exploratory Data Analysis 2</span>
                 </a>
-            </li>
-            <li class="nav-item">
+            </div>
+            <div class="nav-item">
                 <a href="pages/visualization.html" class="nav-link">
                     <i class="fas fa-chart-bar"></i>
                     <span>Data Visualization</span>
                 </a>
-            </li>
-            <li class="nav-item">
+            </div>
+            <div class="nav-item">
                 <a href="pages/datalake.html" class="nav-link">
                     <i class="fas fa-database"></i>
                     <span>Data Lake Implementation</span>
                 </a>
-            </li>
-            <li class="nav-item">
+            </div>
+            <div class="nav-item">
                 <a href="pages/read_write_csv.html" class="nav-link">
                     <i class="fas fa-file-csv"></i>
                     <span>Read/Write CSV</span>
                 </a>
-            </li>
-        </ul>
+            </div>
+            <div class="nav-item">
+                <a href="pages/deltatable.html" class="nav-link">
+                    <i class="fas fa-table"></i>
+                    <span>Delta Table</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="pages/Delta Tables.html" class="nav-link">
+                    <i class="fas fa-database"></i>
+                    <span>Delta Tables Overview</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="pages/Unity Catalog.html" class="nav-link">
+                    <i class="fas fa-book"></i>
+                    <span>Unity Catalog</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Feedback Form -->
+        <div class="feedback">
+            <h2><i class="fas fa-comments"></i> Trainer Feedback</h2>
+            <form action="https://formspree.io/f/mvgbpkjq" method="POST">
+                <div class="form-group">
+                    <label for="email">Your Email</label>
+                    <input type="email" name="email" id="email" placeholder="trainer@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Feedback</label>
+                    <textarea name="message" id="message" rows="4" placeholder="Enter your feedback here..." required></textarea>
+                </div>
+
+                <button type="submit">
+                    <i class="fas fa-paper-plane"></i>
+                    Send Feedback
+                </button>
+            </form>
+        </div>
         
         <div class="footer">
             <p>© 2025 Ruthravarshan. All rights reserved.</p>
